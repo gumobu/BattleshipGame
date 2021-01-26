@@ -1,2 +1,2 @@
 # BattleshipGame
-Fully functional Battleship game for a human playing against computer written in Python with PyGame. Uses Pegame-button
+Fully functional Battleship game for a human playing against computer written in Python with PyGame. Uses Pygame-button
