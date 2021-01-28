@@ -13,10 +13,10 @@ class Grid:
         params (tuple): a tuple of variables, necessary for code running
     ----------
     Methods:
-    __draw_grid(): Draws two grids for both players
-    __add_nums_letters_to_grid(): Draws numbers 1-10 along vertical and adds letters below horizontal
-        lines for both grids
-    __sign_grid(): Puts players' names (titles) in the center above the grids
+        __draw_grid(): Draws two grids for both players
+        __add_nums_letters_to_grid(): Draws numbers 1-10 along vertical and adds letters below horizontal
+            lines for both grids
+        __sign_grid(): Puts players' names (titles) in the center above the grids
     """
 
     def __init__(self, title, offset, screen, params):

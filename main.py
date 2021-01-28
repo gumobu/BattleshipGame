@@ -5,6 +5,10 @@ import pygame_button
 from grid import Grid
 from ships import Ships
 
+
+retry = False
+
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (128, 128, 128)
@@ -308,12 +312,9 @@ computer_ships_working = copy.deepcopy(computer.ships)
 human_ships_working = copy.deepcopy(human.ships)
 
 
-def button_func():
-    pass
-
-
-def restart_func():
-    main()
+def change_retry():
+    global retry
+    retry = not retry
 
 
 def main():
@@ -324,24 +325,24 @@ def main():
     Grid("COMPUTER", 0, screen, (LETTERS, BLACK, left_margin, upper_margin, block_size, font, font_size))
     Grid("HUMAN", 15, screen, (LETTERS, BLACK, left_margin, upper_margin, block_size, font, font_size))
     shoot = ShootHandler()
-    # Buttons for creating ships
+    # Buttons for creating ships. Now useless
     one_cell_button = pygame_button.Button((left_margin, button_top_border, button_size_x, button_size_y),
-                                           BUTTON_COLOR, button_func,
+                                           BUTTON_COLOR, None,
                                            **{'text': "1-cell: 4", 'font': font, 'font_color': BLACK,
                                               'hover_color': GRAY})
     two_cell_button = pygame_button.Button((left_margin + button_size_x + 20, button_top_border, button_size_x,
                                             button_size_y),
-                                           BUTTON_COLOR, button_func,
+                                           BUTTON_COLOR, None,
                                            **{'text': "2-cell: 3", 'font': font, 'font_color': BLACK,
                                               'hover_color': GRAY})
     three_cell_button = pygame_button.Button((left_margin + (button_size_x + 20) * 2, button_top_border, button_size_x,
                                               button_size_y),
-                                             BUTTON_COLOR, button_func,
+                                             BUTTON_COLOR, None,
                                              **{'text': "3-cell: 2", 'font': font, 'font_color': BLACK,
                                                 'hover_color': GRAY})
     four_cell_button = pygame_button.Button((left_margin + (button_size_x + 20) * 3, button_top_border, button_size_x,
                                              button_size_y),
-                                            BUTTON_COLOR, button_func,
+                                            BUTTON_COLOR, None,
                                             **{'text': "4-cell: 1", 'font': font, 'font_color': BLACK,
                                                'hover_color': GRAY})
 
@@ -350,12 +351,6 @@ def main():
         two_cell_button,
         three_cell_button,
         four_cell_button)
-
-    # Button that will be used to restart the game. Now is useless
-    # restart_button = pygame_button.Button((screen_size[0] // 2 * 0.6, screen_size[1] // 4, 100, 60), BUTTON_COLOR,
-    #                                       function=lambda: restart_func,
-    #                                       **{'text': "RESTART", 'font': font, 'font_color': BLACK,
-    #                                          'hover_color': GRAY, 'call_on_release': True})
 
     draw.draw_ships(human.ships)
     draw.draw_ships(computer.ships)
@@ -389,21 +384,33 @@ def main():
             button.update(screen)
         pygame.display.update()
 
+
+def rerun():
+    global retry
+    global game_over
+    restart_button = pygame_button.Button((screen_size[0] // 4, screen_size[1] * 2 // 3, screen_size[0] // 2, 60),
+                                          WHITE, change_retry,
+                                          **{'text': "CLICK TO RETRY",
+                                             'font': pygame.font.SysFont('notosans', int(block_size * 1.5)),
+                                             'hover_color': GRAY,
+                                             'font_color': BLACK})
     win_sign = "{} won"
-    screen.fill(WHITE)
     game_over = not game_over
+
     if computer.opponent_hits_counter == 20:
+        win_sign_to_draw = font.render(win_sign.format("You"), True, BLACK)
+        win_sign_width = win_sign_to_draw.get_width()
+        win_sign_height = win_sign_to_draw.get_height()
         while not game_over:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game_over = True
-                else:
-                    win_sign_to_draw = font.render(win_sign.format("You"), True, BLACK)
-                    win_sign_width = win_sign_to_draw.get_width()
-                    win_sign_height = win_sign_to_draw.get_height()
-                    screen.blit(win_sign_to_draw, ((screen_size[0] - win_sign_width) // 2,
-                                                   (screen_size[1] - win_sign_height) // 2))
-                    pygame.display.update()
+                restart_button.check_event(event)
+            screen.fill(WHITE)
+            screen.blit(win_sign_to_draw, ((screen_size[0] - win_sign_width) // 2,
+                                           (screen_size[1] - win_sign_height) // 2))
+            restart_button.update(screen)
+            pygame.display.update()
     elif human.opponent_hits_counter == 20:
         while not game_over:
             for event in pygame.event.get():
@@ -415,10 +422,17 @@ def main():
                     win_sign_height = win_sign_to_draw.get_height()
                     screen.blit(win_sign_to_draw, ((screen_size[0] - win_sign_width) // 2,
                                                    (screen_size[1] - win_sign_height) // 2))
+                    restart_button.update(screen)
                     pygame.display.update()
-    else:
+    pass
+
+
+while True:
+    main()
+    rerun()
+    if retry is True:
         pass
+    else:
+        break
 
-
-main()
 pygame.quit()

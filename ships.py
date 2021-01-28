@@ -56,7 +56,6 @@ class Ships:
         ships_set (set of tuples): all blocks that are occupied by ships
         ships (list of lists): list of all individual ships (as lists)
         """
-
         self.offset = offset
         self.available_blocks = {(x, y) for x in range(1 + self.offset, 11 + self.offset) for y in range(1, 11)}
         self.ships_set = set()
